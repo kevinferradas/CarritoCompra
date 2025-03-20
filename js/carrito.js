@@ -36,6 +36,7 @@ Recuerda la importancia comentar con detalle el código.
 
  let mensajeUsuario=""
  let totalAbsoluto=0
+ let lista_mensajeUsuario = []
  for (let i = 0; i<productes.length; i++) {
     productes[i].addEventListener("click", () => {
 
@@ -58,13 +59,19 @@ Recuerda la importancia comentar con detalle el código.
         let costoFruta = parseFloat(preguntaCantidad)*parseFloat(precioFruta)
         totalAbsoluto += costoFruta
 
-        mensajeUsuario += `<div id="mensajeFruta">
+        mensajeUsuario = `<div id="mensajeFruta">
 
             <img id="basurero" src="img/basurero.png" alt="basurero"/>
             <p>${nombreFruta}:  ${preguntaCantidad} x ${precioFruta} ${magnitud} = ${costoFruta.toFixed(2)} </p>
         </div> `
 
-        carrito.innerHTML = mensajeUsuario 
+        lista_mensajeUsuario.push(mensajeUsuario)
+        
+        for (mensajes of lista_mensajeUsuario){
+            carrito.innerHTML = mensajes
+        }
+
+         
         preuFinal.innerHTML = totalAbsoluto.toFixed(2)
         
     })
@@ -75,8 +82,7 @@ let basurero = document.querySelectorAll("#basurero")
 for (let i = 0; i<basurero.length;i++){
     basurero[i].addEventListener("click", () => {
 
-
+        
     })
 }
 
-sfunct
