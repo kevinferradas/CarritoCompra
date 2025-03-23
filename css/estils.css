@@ -113,6 +113,7 @@ p {
     text-align: right;
 }
 
+/* Estilo para los divs que vayan apareciendo con cada selección */
 #mensajeFruta  {
 
     display: flex;
@@ -120,11 +121,12 @@ p {
     margin-bottom: 10px;
     justify-content: right;
 
+
     img {
 
         width: 20px;  
         height: 20px; 
-        margin-right: 10px;  /*Espacio entre la imagen y el texto*/
+        margin-left: 100px;  /*Espacio entre la imagen y el texto*/
         cursor: pointer;    /* Cambia el cursor cuando se pasa sobre la imagen */
     }
     

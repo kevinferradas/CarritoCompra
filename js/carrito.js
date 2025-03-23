@@ -28,7 +28,7 @@ Recuerda la importancia comentar con detalle el código.
 
  //SOLUCIÓN
 
- // Creamos los nodos para todos los div que se encuentran dentro de la sección con clase="productes"
+ // Seleccionamos todos los div que se encuentran dentro de la sección con clase="productes"
  const productes= document.querySelectorAll(".productes div")
 
  // Creamos el nodo para el precio Total, que está envuelto en un span con id = "preuFinal"
@@ -53,7 +53,7 @@ Recuerda la importancia comentar con detalle el código.
  for (let i = 0; i<productes.length; i++) {
     productes[i].addEventListener("click", () => {
 
-        // Creamos los nodos para las imágenes y párrafos dentro de cada uno de los div
+        // Seleccionamos las imágenes y párrafos dentro de cada uno de los div
         let imatge= productes[i].querySelector("img")
         let precioFruta = productes[i].querySelector("p").textContent
         
@@ -71,9 +71,11 @@ Recuerda la importancia comentar con detalle el código.
         let preguntaCantidad = prompt(`¿Qué cantidad de ${nombreFruta} deseas?`)
 
         // Calculamos el precio a pagar por cada selección (costo parcial)
+        // Usamos parseFloat porque "preguntaCantidad" y "precioFruta" son strings
+        // y no necesariamente deben ser enteros (en tal caso se hubiera usado parseInt)
         let costoFruta = parseFloat(preguntaCantidad)*parseFloat(precioFruta)
 
-        // Agregamos los costos parciales al array "ListaPrecios"
+        // Agregamos los costos parciales al array "listaCostosParciales"
         listaCostosParciales.push(costoFruta)
 
         // Sumamos los costos parciales al totalAbsoluto
@@ -85,44 +87,57 @@ Recuerda la importancia comentar con detalle el código.
         // que servirá para eliminar algún producto que ya no se quiera. 
         let mensajeUsuario = `<div id="mensajeFruta">
 
-            <img  id="basurero" src="img/basurero.png" alt="basurero"/>
+            <img  class ="basurero" src="img/basurero.png" alt="basurero"/>
             <p>${nombreFruta}:  ${preguntaCantidad} x ${precioFruta} ${magnitud} = ${costoFruta.toFixed(2)} </p>
         </div> `
 
         // Por cada selección, agregamos un nuevo elemento (mensajeUsuario) al array listaMensajeUsuario 
-        listaMensajeUsuario.push(mensajeUsuario)
+        listaMensajeUsuario.push(mensajeUsuario)  
 
-        
+        // Llamamos a la función que actualiza el carrito
+        actualizarCarrito();
+
+    })    
+}
+
+// Declaramos la función actualizarCarrito
+function actualizarCarrito() {
+
+        // El contenido de "carrito" es inicialmente vacío
+        // En cada evento "click" el carrito se limpiará
         carrito.innerHTML = ""
+
+        // Recorremos los elementos de la listaMensaje Usuario
+        // y mostramos cada elemento en "carrito"
         for (mensajes of listaMensajeUsuario){
             carrito.innerHTML += mensajes
         }
 
+        //Mostramos el precio final
+        // .toFixed(2) para mostrar solo 2 cifras decimales
         preuFinal.innerHTML = totalAbsoluto.toFixed(2)
         
-        let basurero = document.querySelectorAll("#basurero")
+        // Selecciona todos los elementos con la clase "basurero"
+        let basurero = document.querySelectorAll(".basurero")
 
+        // Recorremos los elementos de "basurero"
+        //  y les añadimos un evento "click"
         for (let i = 0; i<basurero.length;i++){
             basurero[i].addEventListener("click", () => {
 
-                totalAbsoluto -= listaPrecios[i] 
+                // Restamos el costo del producto eliminado del total absoluto
+                totalAbsoluto -= listaCostosParciales[i] 
 
-                preuFinal.innerHTML = totalAbsoluto.toFixed(2)
-
+            
+                // Eliminamos el mensaje del usuario y el costo correspondiente en los arrays.
+                //splice(i,1) elimina 1 elemento de los arrays, comenzando en el índice i.
                 listaMensajeUsuario.splice(i,1);
-                listaPrecios.splice(i,1)
+                listaCostosParciales.splice(i,1)
 
-                carrito.innerHTML = ""
-                for (mensajes of listaMensajeUsuario){
-                    carrito.innerHTML += mensajes
-                }
-
-       
+                // Llamamos a la función que actualiza el carrito
+                actualizarCarrito()
+               
     })
 }
-
-    })
 }
-
-
 
