@@ -34,18 +34,18 @@ Recuerda la importancia comentar con detalle el código.
  // Creamos el nodo para el precio Total, que está envuelto en un span con id = "preuFinal"
  let preuFinal=document.querySelector("#preuFinal")
 
- // Creamos el nodo para el párrafo cuya clase = "carrito", y en la que se listarán una a una las frutas elegidas.
+ // Creamos el nodo para el párrafo cuya clase es "carrito", y en la que se listarán una a una las frutas elegidas.
  let carrito=document.querySelector("#carrito")
 
  // Definimos la variable "totalAbsoluto" , que irá sumando los costos parciales con cada selección
  let totalAbsoluto=0
 
  // Definimos el array "listaMensajeUsuario" , inicialmente vacía,  que almacenará cada uno de los "mensajeUsuario".
- //  Esto será de utilidad cuando querramos borrar un elemento de la lista 
+ //  Esto será de utilidad cuando querramo eliminar alguna selección. 
  let listaMensajeUsuario = []
 
  // Definimos el array "listaCostosParciales", inicialmente vacía, que almacenará cada uno de los costos parciales-
- // Esto será de utilidad cuando querramos borrar un elemento de la lista, y así poder actualizar el precio Total.
+ // Esto será de utilidad cuando querramos eliminar alguna selección, y así poder actualizar el precio Total.
  let listaCostosParciales =[]
 
 // Iteramos sobre cada uno de los div que pertenecen a la clase "productes"
@@ -67,8 +67,21 @@ Recuerda la importancia comentar con detalle el código.
         // Obtenemos el nombre de la fruta a partir de su atributo "alt" 
         let nombreFruta = imatge.getAttribute("alt"); //Obtenemos el nombre de cada fruta
         
-        // Preguntamos al usuario la cantidad (de la fruta seleccionada) que desea
-        let preguntaCantidad = prompt(`¿Qué cantidad de ${nombreFruta} deseas?`)
+        // Declaramos la variable preguntaCantidad
+        let preguntaCantidad= ""
+
+        // Validación de la cantidad insertada por el cliente
+        // Se muestra un mensaje de alerta,si :
+        // -- el usuario no insertada nada ( null)
+        // -- el usuario ingresa un o varios espacios
+        // -- el usuario ingresa un caracter no numérico
+        while (true){
+
+        preguntaCantidad = prompt(`¿Qué cantidad de ${nombreFruta} deseas?`) // Preguntamos al usuario la cantidad (de la fruta seleccionada) que desea
+        if (preguntaCantidad === null || preguntaCantidad.trim() === "" || isNaN(preguntaCantidad) ) 
+        {alert("Debes insertar una cantidad numérica!")}
+        else{ break}
+        }
 
         // Calculamos el precio a pagar por cada selección (costo parcial)
         // Usamos parseFloat porque "preguntaCantidad" y "precioFruta" son strings
@@ -87,57 +100,64 @@ Recuerda la importancia comentar con detalle el código.
         // que servirá para eliminar algún producto que ya no se quiera. 
         let mensajeUsuario = `<div id="mensajeFruta">
 
-            <img  class ="basurero" src="img/basurero.png" alt="basurero"/>
+            <img onclick="borrarFruta(${listaMensajeUsuario.length})" src="img/basurero.png" alt="basurero"/> 
             <p>${nombreFruta}:  ${preguntaCantidad} x ${precioFruta} ${magnitud} = ${costoFruta.toFixed(2)} </p>
         </div> `
+        // borrarFruta(${listaMensajeUsuario.length}) permite asignar el índice correcto a cada basurero.
+        
 
         // Por cada selección, agregamos un nuevo elemento (mensajeUsuario) al array listaMensajeUsuario 
         listaMensajeUsuario.push(mensajeUsuario)  
 
-        // Llamamos a la función que actualiza el carrito
-        actualizarCarrito();
+        // El contenido de "carrito" es inicialmente vacío
+        // En cada evento "click" el carrito se actualizará
+        actualizarCarrito()
+        
 
     })    
+}
+
+// Declaramos la función borrarFruta
+// Eliminará la línea correspondiente al basurero en el que se ha hecho click
+// Actualiza el contenido de carrito y el precio total
+function borrarFruta(j) {
+
+    // Recorremos los elementos de "listaMensajeUsuario"
+    for (let i = 0; i<listaMensajeUsuario.length;i++){
+
+        // Si el índice 'i' coincide con el que índice 'j' del div dentro del cual se encuentra el basurero clickado
+        // entonces se ejecutará el siguiente código
+        if (i==j){ 
+        
+            // Restamos el costo del producto eliminado del total absoluto
+            totalAbsoluto -= listaCostosParciales[i] 
+
+            // Reemplazamos los elementos de lista correspondiente por strings vacíos
+            listaMensajeUsuario[i]= ""
+            listaCostosParciales[i]=""
+        }
+    }
+
+    // actualizamos el contenido de carrito y el precio total
+    actualizarCarrito()
+
 }
 
 // Declaramos la función actualizarCarrito
 function actualizarCarrito() {
 
-        // El contenido de "carrito" es inicialmente vacío
-        // En cada evento "click" el carrito se limpiará
-        carrito.innerHTML = ""
+    // Limpiamos el carrito
+    carrito.innerHTML = ""
 
-        // Recorremos los elementos de la listaMensaje Usuario
-        // y mostramos cada elemento en "carrito"
-        for (mensajes of listaMensajeUsuario){
-            carrito.innerHTML += mensajes
-        }
+    // Recorremos los elementos de la listaMensajeUsuario
+    // y mostramos cada elemento en "carrito"
+    for (mensajes of listaMensajeUsuario){
+        if(mensajes !="") // Solo se mostraran los mensajes que no sean strings vacíos
+        {carrito.innerHTML += mensajes}
+    }
 
-        //Mostramos el precio final
-        // .toFixed(2) para mostrar solo 2 cifras decimales
-        preuFinal.innerHTML = totalAbsoluto.toFixed(2)
-        
-        // Selecciona todos los elementos con la clase "basurero"
-        let basurero = document.querySelectorAll(".basurero")
-
-        // Recorremos los elementos de "basurero"
-        //  y les añadimos un evento "click"
-        for (let i = 0; i<basurero.length;i++){
-            basurero[i].addEventListener("click", () => {
-
-                // Restamos el costo del producto eliminado del total absoluto
-                totalAbsoluto -= listaCostosParciales[i] 
-
-            
-                // Eliminamos el mensaje del usuario y el costo correspondiente en los arrays.
-                //splice(i,1) elimina 1 elemento de los arrays, comenzando en el índice i.
-                listaMensajeUsuario.splice(i,1);
-                listaCostosParciales.splice(i,1)
-
-                // Llamamos a la función que actualiza el carrito
-                actualizarCarrito()
-               
-    })
-}
+    //Mostramos el precio final
+    // .toFixed(2) para mostrar solo 2 cifras decimales
+    preuFinal.innerHTML = totalAbsoluto.toFixed(2)
 }
 
